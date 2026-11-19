@@ -57,6 +57,9 @@ export async function buildApp() {
     if (config.isProd) {
       reply.header(
         'Content-Security-Policy',
+        // Note: violations referencing ton.local.twitter.com / serviceworker *.map
+        // come from third-party browser extensions, not from CleanSoc (we ship no
+        // service worker and no source maps). Do not whitelist that origin.
         "default-src 'self'; img-src 'self' data: blob: https://pbs.twimg.com https://abs.twimg.com; media-src 'self' blob: https://video.twimg.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'",
       );
     }
