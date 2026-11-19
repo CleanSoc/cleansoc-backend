@@ -155,12 +155,16 @@ export async function createSession(
     request.headers['user-agent']?.slice(0, 300) ?? null,
     request.ip,
   );
-  const secure = config.appUrl.startsWith('https://') || config.isProd;
+  const isHttps =
+    request.protocol === 'https' ||
+    request.headers['x-forwarded-proto'] === 'https' ||
+    config.appUrl.startsWith('https://') ||
+    config.isProd;
   reply.setCookie(config.sessionCookie, token, {
     path: '/',
     httpOnly: true,
-    sameSite: secure ? 'none' : 'lax',
-    secure,
+    sameSite: isHttps ? 'none' : 'lax',
+    secure: isHttps,
     expires,
   });
 }

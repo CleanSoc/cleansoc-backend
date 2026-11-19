@@ -50,11 +50,16 @@ export async function authRoutes(app: FastifyInstance) {
 
   app.get('/api/auth/x/start', async (request, reply) => {
     const { url, browserNonce } = await createOAuthAuthorizeUrl(request.auth?.user.id ?? null);
+    const secure =
+      request.protocol === 'https' ||
+      request.headers['x-forwarded-proto'] === 'https' ||
+      config.appUrl.startsWith('https://') ||
+      config.isProd;
     reply.setCookie('cleansoc_oauth', browserNonce, {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',
-      secure: config.appUrl.startsWith('https://') || config.isProd,
+      secure,
       maxAge: 600,
     });
     return reply.redirect(url);
