@@ -54,7 +54,7 @@ export async function authRoutes(app: FastifyInstance) {
       path: '/',
       httpOnly: true,
       sameSite: 'lax',
-      secure: config.isProd,
+      secure: config.appUrl.startsWith('https://') || config.isProd,
       maxAge: 600,
     });
     return reply.redirect(url);
