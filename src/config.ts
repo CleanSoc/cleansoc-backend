@@ -30,19 +30,34 @@ function loadEncryptionKey(): Buffer {
   return key;
 }
 
+function normalizeAppUrl(value: string): string {
+  let v = value.trim();
+  // Repair common copy/paste mistakes such as "http:https://..." or trailing slashes.
+  v = v.replace(/^https?:https:\/\//i, 'https://');
+  v = v.replace(/^https?:http:\/\//i, 'http://');
+  v = v.replace(/\/+$/, '');
+  return v;
+}
+
+function normalizeDatabaseUrl(value: string): string {
+  // pg warns that `prefer`/`require` are aliased to `verify-full` in pg v8.
+  // Use the explicit, secure form to silence the warning and keep TLS verification.
+  return value.replace(/([?&])sslmode=(prefer|require)(?=&|$)/gi, '$1sslmode=verify-full');
+}
+
 function databaseUrl(): string {
   const fromEnv = process.env.DATABASE_URL?.trim();
-  if (fromEnv) return fromEnv;
+  if (fromEnv) return normalizeDatabaseUrl(fromEnv);
   if (isProd) {
     throw new Error('DATABASE_URL is required in production');
   }
-  return 'postgres://postgres:postgres@localhost:5432/cleansoc';
+  return normalizeDatabaseUrl('postgres://postgres:postgres@localhost:5432/cleansoc');
 }
 
 export const config = {
   isProd,
   port: Number(process.env.PORT ?? 8787),
-  appUrl: (process.env.APP_URL ?? 'http://localhost:5173').replace(/\/$/, ''),
+  appUrl: normalizeAppUrl(process.env.APP_URL ?? 'http://localhost:5173'),
   dataDir,
   database: {
     url: databaseUrl(),

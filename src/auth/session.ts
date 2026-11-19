@@ -158,7 +158,7 @@ export async function createSession(
   reply.setCookie(config.sessionCookie, token, {
     path: '/',
     httpOnly: true,
-    sameSite: 'lax',
+    sameSite: config.isProd ? 'none' : 'lax',
     secure: config.isProd,
     expires,
   });
