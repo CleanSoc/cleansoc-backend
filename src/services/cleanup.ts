@@ -561,6 +561,15 @@ async function processItem(
         await recomputeJob(job.id);
         return 'ok';
       }
+      if (err.status === 402) {
+        await markItemFailed(
+          item,
+          'payment_required',
+          'X requires a paid API access tier for deletions (Payment Required).',
+        );
+        await recomputeJob(job.id);
+        return 'ok';
+      }
       const attempts = item.attempts + 1;
       if (attempts >= MAX_ATTEMPTS) {
         await markItemFailed(item, String(err.code), err.message, attempts);

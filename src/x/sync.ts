@@ -117,13 +117,17 @@ export async function syncAccount(accountId: string): Promise<void> {
       });
     } else {
       const message = err instanceof Error ? err.message : 'Sync failed';
+      const friendly =
+        err instanceof XApiError && err.status === 402
+          ? 'X requires a paid API access tier for this operation (Payment Required). Upgrade your X developer project or use an archive import.'
+          : message;
       await run(
         "UPDATE accounts SET last_sync_status = 'error', last_sync_error = ?, last_sync_count = ? WHERE id = ?",
-        message,
+        friendly,
         stored,
         accountId,
       );
-      await logActivity({ userId: account.user_id, accountId, action: 'sync.failed', detail: { message } });
+      await logActivity({ userId: account.user_id, accountId, action: 'sync.failed', detail: { message: friendly } });
     }
   } finally {
     activeSyncs.delete(accountId);

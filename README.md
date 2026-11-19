@@ -190,6 +190,9 @@ Documented honestly — CleanSoc does not fake capabilities the API does not hav
 - Deletes: ~50 per 15 minutes per user (enforced by X, surfaced to the user as pause/resume).
 - CleanSoc's worker processes one delete at a time for real accounts and batches of 12 for the demo dataset.
 
+**Access tiers**
+- X API v2 requires a paid developer tier (Basic or above) for timeline reads and tweet deletion. Free-tier projects receive `402 Payment Required`. CleanSoc surfaces this error and falls back to archive import for historical data.
+
 ## Testing
 
 - `npm run typecheck` — TypeScript strict check.
