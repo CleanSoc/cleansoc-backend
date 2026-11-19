@@ -200,4 +200,3 @@ async function upsertApiPost(accountId: string, post: ReturnType<typeof mapXPost
     ...columns.map((c) => values[c]),
   );
 }
-
