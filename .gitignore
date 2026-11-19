@@ -1,0 +1,25 @@
+# Environment variables — never commit real secrets
+.env
+.env.*
+.env.example
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Database / local data
+data/
+*.db
+*.sqlite
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
